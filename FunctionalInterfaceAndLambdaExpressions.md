@@ -4,28 +4,25 @@
 > Master this topic to understand Streams, Method References, and modern Java coding style.
 
 ---
-
 ## Table of Contents
 
-1. [What is a Functional Interface?](#1-what-is-a-functional-interface)
-2. [Why Were Functional Interfaces Introduced?](#2-why-were-functional-interfaces-introduced)
-3. [The `@FunctionalInterface` Annotation](#3-the-functionalinterface-annotation)
-4. [Rules for Functional Interfaces](#4-rules-for-functional-interfaces)
-5. [What is a Lambda Expression?](#5-what-is-a-lambda-expression)
-6. [Why Were Lambda Expressions Introduced?](#6-why-were-lambda-expressions-introduced)
-7. [Lambda Expression Syntax](#7-lambda-expression-syntax)
-8. [Lambda Syntax Rules](#8-lambda-syntax-rules)
-9. [Type Inference in Lambda Expressions](#9-type-inference-in-lambda-expressions)
-10. [Lambda vs Anonymous Inner Class](#10-lambda-vs-anonymous-inner-class)
-11. [Lambda Expressions with Collections](#11-lambda-expressions-with-collections)
-12. [Practical Code Examples](#12-practical-code-examples)
-13. [Interview Q&A](#13-interview-qa)
-14. [Key Points to Remember](#14-key-points-to-remember)
-15. [Built-in Functional Interfaces — `Function<T, R>`](#15-built-in-functional-interfaces--functiont-r)
+1. [What is a Functional Interface? 🧩](#1-what-is-a-functional-interface)
+2. [Why Were Functional Interfaces Introduced? 🎯](#2-why-were-functional-interfaces-introduced)
+3. [The `@FunctionalInterface` Annotation 🏷️](#3-the-functionalinterface-annotation)
+4. [Rules for Functional Interfaces 📜](#4-rules-for-functional-interfaces)
+5. [What is a Lambda Expression? ⚡](#5-what-is-a-lambda-expression)
+6. [Why Were Lambda Expressions Introduced? 🚀](#6-why-were-lambda-expressions-introduced)
+7. [Lambda Expression Syntax 📝](#7-lambda-expression-syntax)
+8. [Lambda Syntax Rules 📏](#8-lambda-syntax-rules)
+9. [Type Inference in Lambda Expressions 🔍](#9-type-inference-in-lambda-expressions)
+10. [Lambda vs Anonymous Inner Class ⚔️](#10-lambda-vs-anonymous-inner-class)
+11. [Lambda Expressions with Collections 📂](#11-lambda-expressions-with-collections)
+12. [Practical Code Examples 💡](#12-practical-code-examples)
+13. [Interview Q&A 🎤](#13-interview-qa)
+14. [Key Points to Remember 🔑](#14-key-points-to-remember)
+15. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#15-built-in-functional-interfaces--functiont-r)
 
----
-
-## 1. What is a Functional Interface?
+## 1. What is a Functional Interface? 🧩
 
 A **Functional Interface** is an interface that contains **exactly one abstract method**.
 
