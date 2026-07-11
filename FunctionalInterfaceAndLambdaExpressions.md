@@ -626,330 +626,6 @@ public class Main {
 
 The lambda replaces the entire anonymous inner class with a single line.
 
----
-
-### Example 6: `Function` with an Employee Object
-
-```java
-import java.util.function.Function;
-
-class Employee {
-    private String name;
-    private Long phoneNumber;
-    private String gender;
-
-    public Employee(String name, Long phoneNumber, String gender) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.gender = gender;
-    }
-
-    String getName()        { return this.name; }
-    Long getPhoneNumber()   { return this.phoneNumber; }
-    String getGender()      { return this.gender; }
-}
-
-public class Main {
-    public static void main(String[] args) {
-        Employee emp = new Employee("Sanket", 9887766554L, "Male");
-
-        // Extract phone number
-        Function<Employee, Long> getPhoneNumber = e -> e.getPhoneNumber();
-        Long empPhoneNumber = getPhoneNumber.apply(emp);
-        System.out.println("Phone number of Employee is : " + empPhoneNumber);
-
-        // Extract gender
-        Function<Employee, String> genderOfEmployee = e -> e.getGender();
-        String gender = genderOfEmployee.apply(emp);
-        System.out.println("Gender : " + gender);
-    }
-}
-```
-
-**Output:**
-```
-Phone number of Employee is : 9887766554
-Gender : Male
-```
-
-`Function<Employee, Long>` reads: *"Take an `Employee` as input, return a `Long`."*
-
----
-
-### Example 7: `Function` to Calculate Average Salary
-
-```java
-import java.util.function.Function;
-
-class Employee2 {
-    private String name;
-    private int salary;
-
-    public Employee2(String name, int salary) {
-        this.name = name;
-        this.salary = salary;
-    }
-
-    public String getName()  { return name; }
-    public int getSalary()   { return salary; }
-}
-
-public class Main3 {
-    public static void main(String[] args) {
-        Employee2[] employees = {
-                new Employee2("Sanket", 50000),
-                new Employee2("Ravi",   60000),
-                new Employee2("Neha",   55000),
-                new Employee2("Amit",   65000)
-        };
-
-        Function<Employee2[], Double> getAverageSalary = emps -> {
-            int sum = 0;
-            for (Employee2 e : employees) {
-                sum = sum + e.getSalary();
-            }
-            return (double) sum / employees.length;
-        };
-
-        double avg = getAverageSalary.apply(employees);
-        System.out.println("Average Salary = " + avg);
-    }
-}
-```
-
-**Output:** `Average Salary = 57500.0`
-
-This demonstrates using `Function` with a multi-statement lambda body to process an array of objects.
-
----
-
-### Example 8: `Function` to Filter Female Employees
-
-```java
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Function;
-
-class Employee3 {
-    private String name;
-    private String gender;
-    private int salary;
-
-    public Employee3(String name, String gender, int salary) {
-        this.name = name;
-        this.gender = gender;
-        this.salary = salary;
-    }
-
-    public String getName()   { return name; }
-    public String getGender() { return gender; }
-    public int getSalary()    { return salary; }
-}
-
-public class Main4 {
-    public static void main(String[] args) {
-        List<Employee3> employees = new ArrayList<>();
-        employees.add(new Employee3("Sanket", "Male",   50000));
-        employees.add(new Employee3("Neha",   "Female", 45000));
-        employees.add(new Employee3("Ravi",   "Male",   55000));
-        employees.add(new Employee3("Priya",  "Female", 65000));
-
-        Function<List<Employee3>, List<Employee3>> getFemaleEmployees = emps -> {
-            List<Employee3> females = new ArrayList<>();
-            for (Employee3 e : emps) {
-                if ("Female".equalsIgnoreCase(e.getGender())) {
-                    females.add(e);
-                }
-            }
-            return females;
-        };
-
-        List<Employee3> femaleList = getFemaleEmployees.apply(employees);
-        System.out.println("Female Employees:");
-
-        for (Employee3 f : femaleList) {
-            System.out.println(f.getName() + " - " + f.getSalary());
-        }
-    }
-}
-```
-
-**Output:**
-```
-Female Employees:
-Neha - 45000
-Priya - 65000
-```
-
-`Function<List<Employee3>, List<Employee3>>` reads: *"Take a list of employees, return a filtered list of employees."*
-
----
-
-### Example 9: `Function` to Get Total Marks of a Student
-
-```java
-import java.util.function.Function;
-
-class Student {
-    private int Physics;
-    private int Maths;
-    private int Chemistry;
-
-    public Student(int Physics, int Maths, int Chemistry) {
-        this.Physics = Physics;
-        this.Maths = Maths;
-        this.Chemistry = Chemistry;
-    }
-
-    public Integer getSum() {
-        return this.Physics + this.Chemistry + this.Maths;
-    }
-}
-
-public class Main2 {
-    public static void main(String[] args) {
-        Student std = new Student(56, 50, 87);
-
-        Function<Student, Integer> getSum = s -> s.getSum();
-
-        Integer result = getSum.apply(std);
-
-        System.out.println("Sum of Marks of Student : " + result);
-    }
-}
-```
-
-**Output:** `Sum of Marks of Student : 193`
-
----
-
-
-## 13. Interview Q&A
-
-### Q1. What is a Lambda Expression in Java 8?
-
-A Lambda Expression is an **anonymous function** that allows writing short and clean code. It is mainly used to provide the implementation of a Functional Interface.
-
-```java
-() -> System.out.println("Hello");
-```
-
----
-
-### Q2. Why were Lambda Expressions introduced in Java 8?
-
-Lambda Expressions were introduced to:
-- Reduce boilerplate code
-- Make code more readable
-- Support functional programming
-- Make collection processing easier
-- Improve usage of Stream API
-
----
-
-### Q3. What is the syntax of a Lambda Expression?
-
-```java
-(parameters) -> { body }
-```
-
-Examples:
-```java
-() -> System.out.println("Hello");          // No parameters
-name -> System.out.println(name);           // One parameter
-(a, b) -> a + b;                            // Two parameters, single expression
-(a, b) -> { int sum = a+b; return sum; };   // Multi-line body
-```
-
----
-
-### Q4. What is a Functional Interface?
-
-A Functional Interface is an interface with **only one abstract method**.
-
-```java
-@FunctionalInterface
-interface Greeting {
-    void sayHello();
-}
-```
-
----
-
-### Q5. Can a Lambda Expression be used without a Functional Interface?
-
-**No.** A Lambda Expression can only be used with a Functional Interface because it provides the implementation for exactly one abstract method. If the interface had multiple abstract methods, the lambda would not know which one to implement.
-
----
-
-### Q6. What is the `@FunctionalInterface` annotation?
-
-`@FunctionalInterface` tells the compiler that the interface must have only one abstract method. If the interface has more than one abstract method, the compiler gives an error.
-
----
-
-### Q7. Is `@FunctionalInterface` annotation mandatory?
-
-**No.** It is not mandatory, but it is **recommended** because it helps catch mistakes at compile time and clearly communicates intent.
-
----
-
-### Q8. Can a Functional Interface have default methods?
-
-**Yes.** A Functional Interface can have any number of `default` methods. Only abstract methods matter for the functional interface rule.
-
----
-
-### Q9. Can a Functional Interface have static methods?
-
-**Yes.** A Functional Interface can have `static` methods as well.
-
----
-
-### Q10. What is the difference between Lambda Expression and Anonymous Inner Class?
-
-| Lambda Expression | Anonymous Inner Class |
-|---|---|
-| Short and clean | More verbose |
-| Used **only** with Functional Interfaces | Can be used with any interface or abstract class |
-| Improves readability | Less readable |
-| Introduced in Java 8 | Available before Java 8 |
-
----
-
-### Q11. What is the arrow operator (`->`) in Lambda Expression?
-
-The `->` operator **separates** the parameters from the lambda body.
-
-```java
-name -> System.out.println(name);
-// name = parameter
-// System.out.println(name) = body
-```
-
----
-
-### Q12. What is type inference in Lambda Expression?
-
-Type inference means Java **automatically understands** the data type of lambda parameters from the Functional Interface method declaration.
-
-```java
-// Interface method: int add(int a, int b)
-Calculator calc = (a, b) -> a + b; // Java knows a and b are int
-```
-
----
-
-### Q13. Can a Lambda Expression have multiple statements?
-
-**Yes.** Use `{}` braces for multiple statements, and include a `return` statement if a value is returned.
-
-```java
-(a, b) -> {
-    int sum = a + b;
-    return sum;
-};
-```
 
 ---
 
@@ -1026,16 +702,9 @@ Here:
 
 ### 15.2 Why Was `Function<T, R>` Introduced?
 
-Before Java 8, if you wanted to write a reusable piece of logic that converts or transforms data, you would need to:
+Function<T, R> was introduced in Java 8 to avoid creating separate interfaces and classes for simple data transformation logic. It allows us to write the transformation directly using a lambda expression, making the code shorter, cleaner, and easier to read.
 
-1. Create an interface with a method
-2. Write a class that implements that interface
-3. Create an object of that class
-4. Call the method
 
-That is a lot of effort for something simple like "convert a name to uppercase".
-
-`Function<T, R>` was introduced so that you can **skip all of that** and write the transformation logic directly using a lambda expression.
 
 **Without `Function` (the old way):**
 
@@ -1403,3 +1072,199 @@ public class Main {
 - This shows that `Function` is not limited to simple one-line transformations — it can handle **complex logic** too.
 
 ---
+
+#### Example 6 : `Function` with an Employee Object
+
+```java
+import java.util.function.Function;
+
+class Employee {
+    private String name;
+    private Long phoneNumber;
+    private String gender;
+
+    public Employee(String name, Long phoneNumber, String gender) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+    }
+
+    String getName()        { return this.name; }
+    Long getPhoneNumber()   { return this.phoneNumber; }
+    String getGender()      { return this.gender; }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Employee emp = new Employee("Sanket", 9887766554L, "Male");
+
+        // Extract phone number
+        Function<Employee, Long> getPhoneNumber = e -> e.getPhoneNumber();
+        Long empPhoneNumber = getPhoneNumber.apply(emp);
+        System.out.println("Phone number of Employee is : " + empPhoneNumber);
+
+        // Extract gender
+        Function<Employee, String> genderOfEmployee = e -> e.getGender();
+        String gender = genderOfEmployee.apply(emp);
+        System.out.println("Gender : " + gender);
+    }
+}
+```
+
+**Output:**
+```
+Phone number of Employee is : 9887766554
+Gender : Male
+```
+
+`Function<Employee, Long>` reads: *"Take an `Employee` as input, return a `Long`."*
+
+---
+
+#### Example 7 : `Function` to Calculate Average Salary
+
+```java
+import java.util.function.Function;
+
+class Employee2 {
+    private String name;
+    private int salary;
+
+    public Employee2(String name, int salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    public String getName()  { return name; }
+    public int getSalary()   { return salary; }
+}
+
+public class Main3 {
+    public static void main(String[] args) {
+        Employee2[] employees = {
+                new Employee2("Sanket", 50000),
+                new Employee2("Ravi",   60000),
+                new Employee2("Neha",   55000),
+                new Employee2("Amit",   65000)
+        };
+
+        Function<Employee2[], Double> getAverageSalary = emps -> {
+            int sum = 0;
+            for (Employee2 e : employees) {
+                sum = sum + e.getSalary();
+            }
+            return (double) sum / employees.length;
+        };
+
+        double avg = getAverageSalary.apply(employees);
+        System.out.println("Average Salary = " + avg);
+    }
+}
+```
+
+**Output:** `Average Salary = 57500.0`
+
+This demonstrates using `Function` with a multi-statement lambda body to process an array of objects.
+
+---
+
+#### Example 8 : `Function` to Filter Female Employees
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+class Employee3 {
+    private String name;
+    private String gender;
+    private int salary;
+
+    public Employee3(String name, String gender, int salary) {
+        this.name = name;
+        this.gender = gender;
+        this.salary = salary;
+    }
+
+    public String getName()   { return name; }
+    public String getGender() { return gender; }
+    public int getSalary()    { return salary; }
+}
+
+public class Main4 {
+    public static void main(String[] args) {
+        List<Employee3> employees = new ArrayList<>();
+        employees.add(new Employee3("Sanket", "Male",   50000));
+        employees.add(new Employee3("Neha",   "Female", 45000));
+        employees.add(new Employee3("Ravi",   "Male",   55000));
+        employees.add(new Employee3("Priya",  "Female", 65000));
+
+        Function<List<Employee3>, List<Employee3>> getFemaleEmployees = emps -> {
+            List<Employee3> females = new ArrayList<>();
+            for (Employee3 e : emps) {
+                if ("Female".equalsIgnoreCase(e.getGender())) {
+                    females.add(e);
+                }
+            }
+            return females;
+        };
+
+        List<Employee3> femaleList = getFemaleEmployees.apply(employees);
+        System.out.println("Female Employees:");
+
+        for (Employee3 f : femaleList) {
+            System.out.println(f.getName() + " - " + f.getSalary());
+        }
+    }
+}
+```
+
+**Output:**
+```
+Female Employees:
+Neha - 45000
+Priya - 65000
+```
+
+`Function<List<Employee3>, List<Employee3>>` reads: *"Take a list of employees, return a filtered list of employees."*
+
+---
+
+#### Example 9 : `Function` to Get Total Marks of a Student
+
+```java
+import java.util.function.Function;
+
+class Student {
+    private int Physics;
+    private int Maths;
+    private int Chemistry;
+
+    public Student(int Physics, int Maths, int Chemistry) {
+        this.Physics = Physics;
+        this.Maths = Maths;
+        this.Chemistry = Chemistry;
+    }
+
+    public Integer getSum() {
+        return this.Physics + this.Chemistry + this.Maths;
+    }
+}
+
+public class Main2 {
+    public static void main(String[] args) {
+        Student std = new Student(56, 50, 87);
+
+        Function<Student, Integer> getSum = s -> s.getSum();
+
+        Integer result = getSum.apply(std);
+
+        System.out.println("Sum of Marks of Student : " + result);
+    }
+}
+```
+
+**Output:** `Sum of Marks of Student : 193`
+
+---
+
