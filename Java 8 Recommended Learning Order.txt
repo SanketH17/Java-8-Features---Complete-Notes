@@ -1,0 +1,45 @@
+Recommended Learning Order
+
+1. Lambda Expressions
+2. Functional Interfaces (before learning this learn : Generics in Javan: Session 77 & 78 - DilipIT)
+	Predicate
+	Function
+	Consumer
+	Supplier
+(Session : 86 & 87)
+
+3. Method References
+
+4. Stream API
+	Must Learn
+	filter()
+	map()
+	sorted()
+	limit()
+	distinct()
+	count()
+	collect()
+	reduce()
+
+5. Collectors
+
+6. Optional Class
+
+7. Date & Time API
+
+8. Default Methods in Interface (Video : 64 and 65 DilipIT)
+
+9. Static Methods in Interface (Video : 64 and 65 DilipIT)
+
+
+===================================================
+Most Important for Interviews
+✅ Lambda Expressions
+✅ Functional Interfaces
+	=> Predicate / Function / Consumer / Supplier
+✅ Stream API
+✅ Method References
+✅ Optional Class
+✅ Collectors
+✅ Date & Time API
+

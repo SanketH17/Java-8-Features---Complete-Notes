@@ -18,6 +18,8 @@
 13. [Key Points to Remember 🔑](#13-key-points-to-remember)
 14. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#14-built-in-functional-interfaces--functiont-r)
 15. [Built-in Functional Interfaces — `Predicate<T>` ✅](#15-built-in-functional-interfaces--predicatet)
+16. [Built-in Functional Interfaces — `Consumer<T>` 📥](#16-built-in-functional-interfaces--consumert)
+17. [Built-in Functional Interfaces — `Supplier<T>` 📤](#17-built-in-functional-interfaces--suppliert)
 
 ## 1. What is a Functional Interface?🧩
 
@@ -1357,37 +1359,6 @@ The simple rule is:
 
 ---
 
-### 15.4 Real-World Analogy — The Security Guard
-
-Imagine a **security guard** at the entrance of a building:
-
-- A person walks up to the gate → This is the **input** (`T`)
-- The guard checks: "Do you have a valid ID?" → This is the **test()** method
-- The guard says **"Yes, you may enter"** or **"No, you cannot enter"** → This is the **boolean result**
-
-```
-[Person]  →  [ Security Guard ]  →  [true / false]
-   T              test()              boolean
-```
-
-- The **guard** is the `Predicate`
-- The **question** he asks is the lambda logic
-- The **answer** is always Yes (`true`) or No (`false`)
-
-In code:
-
-```java
-Predicate<String> hasValidID = id -> id != null && !id.isEmpty();
-
-System.out.println(hasValidID.test("ID-12345")); // true
-System.out.println(hasValidID.test(""));          // false
-System.out.println(hasValidID.test(null));         // false
-```
-
-The **same guard** (same `Predicate`) checks **every person** using the **same rule**.
-
----
-
 ### 15.5 How the `test()` Method Works
 
 `test()` is the **single abstract method** of the `Predicate<T>` interface.
@@ -1823,6 +1794,533 @@ Non-Admins: [User{name='Rahul', role='member'}, User{name='Amit', role='member'}
 - The same `filterUsers()` method is reused for both filtering admins **and** non-admins.
 - For non-admins, we used `isAdmin.negate()` instead of writing a new lambda — this shows the real power of the `negate()` method.
 - This pattern is extremely common in real-world Java applications for filtering data from databases, APIs, and collections.
+
+---
+
+## 16. Built-in Functional Interfaces — `Consumer<T>` 📥
+
+### 16.1 What is `Consumer<T>`?
+
+`Consumer<T>` is a built-in Functional Interface that:
+
+- **Takes one input** of type `T`
+- **Performs an action** on it
+- **Returns nothing** (`void`)
+
+In simple words:
+
+> `Consumer<T>` is like a **black hole** — it takes something in, does something with it, but gives nothing back.
+
+```java
+@FunctionalInterface
+public interface Consumer<T> {
+    void accept(T t);
+}
+```
+
+| Symbol | Meaning |
+|---|---|
+| `T` | The type of input the consumer accepts |
+| `void` | It never returns a value |
+
+---
+
+### 16.2 When to Use `Consumer<T>`?
+
+Use it whenever you want to **do something** with a value but **don't need a result back**.
+
+| Scenario | Input (`T`) | Action |
+|---|---|---|
+| Print a value | `String` | `System.out.println(...)` |
+| Log a message | `String` | Write to log file |
+| Save to database | `Employee` | Insert into DB |
+| Send a notification | `User` | Send email/SMS |
+
+> **Simple rule:** If you want to **use** the data but not **return** anything — use `Consumer<T>`.
+
+---
+
+### 16.3 How `accept()` Works
+
+`accept()` is the single abstract method. You pass the input, the lambda runs, and nothing is returned.
+
+```java
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        Consumer<String> printName = name -> System.out.println("Hello, " + name);
+
+        printName.accept("Sanket"); // Hello, Sanket
+        printName.accept("Rahul");  // Hello, Rahul
+    }
+}
+```
+
+**Flow:**
+```
+Input (T = String):  "Sanket"
+Action (accept):     name -> System.out.println("Hello, " + name)
+Output:              nothing (void)
+```
+
+---
+
+### 16.4 Default Method — `andThen()`
+
+`Consumer` has one default method: `andThen()`. It lets you **chain** two consumers — the first runs, then the second runs on the **same input**.
+
+```java
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        Consumer<String> toUpperCase = s -> System.out.println(s.toUpperCase());
+        Consumer<String> toLowerCase = s -> System.out.println(s.toLowerCase());
+
+        // Chain: first print uppercase, then print lowercase
+        Consumer<String> both = toUpperCase.andThen(toLowerCase);
+
+        both.accept("Sanket");
+    }
+}
+```
+
+**Output:**
+```
+SANKET
+sanket
+```
+
+> Both consumers receive the **same original input** `"Sanket"`.
+
+---
+
+### 16.5 Summary Table
+
+| Aspect | Detail |
+|---|---|
+| **Package** | `java.util.function` |
+| **Interface** | `Consumer<T>` |
+| **Abstract method** | `void accept(T t)` |
+| **Input** | One input of type `T` |
+| **Output** | None (`void`) |
+| **Default method** | `andThen()` |
+| **Purpose** | Perform an action on input without returning anything |
+
+---
+
+### 16.6 `Consumer<T>` — Code Examples
+
+---
+
+#### Example 1: Print a String
+
+```java
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        Consumer<String> print = msg -> System.out.println(msg);
+
+        print.accept("Welcome to Java 8");
+    }
+}
+```
+
+**Output:** `Welcome to Java 8`
+
+The simplest use — takes a string, prints it, returns nothing.
+
+---
+
+#### Example 2: Print Each Element of a List
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Sanket", "Rahul", "Amit");
+
+        Consumer<String> printName = name -> System.out.println("Name: " + name);
+
+        names.forEach(printName);
+    }
+}
+```
+
+**Output:**
+```
+Name: Sanket
+Name: Rahul
+Name: Amit
+```
+
+`forEach()` internally uses `Consumer` — this is why they work together naturally.
+
+---
+
+#### Example 3: Modify and Print a Number
+
+```java
+import java.util.function.Consumer;
+
+public class Main {
+    public static void main(String[] args) {
+        Consumer<Integer> printSquare = n -> System.out.println("Square: " + (n * n));
+
+        printSquare.accept(5);  // Square: 25
+        printSquare.accept(9);  // Square: 81
+    }
+}
+```
+
+**Output:**
+```
+Square: 25
+Square: 81
+```
+
+It computes and prints the square, but **returns nothing**.
+
+---
+
+#### Example 4: Print Employee Details (Using Object)
+
+```java
+import java.util.function.Consumer;
+
+class Employee {
+    String name;
+    int salary;
+
+    Employee(String name, int salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Employee emp = new Employee("Sanket", 50000);
+
+        Consumer<Employee> printEmployee = e ->
+            System.out.println(e.name + " earns " + e.salary);
+
+        printEmployee.accept(emp);
+    }
+}
+```
+
+**Output:** `Sanket earns 50000`
+
+`Consumer<Employee>` reads: *"Give me an Employee, I will do something with it but return nothing."*
+
+---
+
+#### Example 5: Apply Salary Bonus to a List of Employees (Using Object)
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+class Employee2 {
+    String name;
+    double salary;
+
+    Employee2(String name, double salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        List<Employee2> employees = Arrays.asList(
+            new Employee2("Sanket", 50000),
+            new Employee2("Neha", 45000),
+            new Employee2("Amit", 60000)
+        );
+
+        // Consumer that gives a 10% bonus
+        Consumer<Employee2> applyBonus = e -> e.salary = e.salary * 1.10;
+
+        // Consumer that prints details
+        Consumer<Employee2> printDetails = e ->
+            System.out.println(e.name + " -> " + e.salary);
+
+        // Chain: first apply bonus, then print
+        Consumer<Employee2> bonusAndPrint = applyBonus.andThen(printDetails);
+
+        employees.forEach(bonusAndPrint);
+    }
+}
+```
+
+**Output:**
+```
+Sanket -> 55000.0
+Neha -> 49500.0
+Amit -> 66000.0
+```
+
+This shows `andThen()` in a real-world scenario — first modify the data, then display it, all using consumers.
+
+---
+
+## 17. Built-in Functional Interfaces — `Supplier<T>` 📤
+
+### 17.1 What is `Supplier<T>`?
+
+`Supplier<T>` is a built-in Functional Interface that:
+
+- **Takes no input**
+- **Returns one output** of type `T`
+
+In simple words:
+
+> `Supplier<T>` is like a **factory** — you ask for something, and it gives it to you without needing anything from you.
+
+```java
+@FunctionalInterface
+public interface Supplier<T> {
+    T get();
+}
+```
+
+| Symbol | Meaning |
+|---|---|
+| `T` | The type of value the supplier **produces** |
+| No input | The `get()` method takes **zero parameters** |
+
+> **Key difference from other interfaces:** `Predicate`, `Function`, and `Consumer` all take input. `Supplier` takes **nothing** — it only **gives**.
+
+---
+
+### 17.2 When to Use `Supplier<T>`?
+
+Use it whenever you need to **generate or provide a value** without any input.
+
+| Scenario | Output (`T`) | What it Supplies |
+|---|---|---|
+| Get current date/time | `LocalDate` | Today's date |
+| Generate a random number | `Integer` | A random value |
+| Create a default object | `Employee` | A new Employee with default values |
+| Return a constant message | `String` | A welcome message |
+
+> **Simple rule:** If you want to **produce** a value without needing any input — use `Supplier<T>`.
+
+---
+
+### 17.3 How `get()` Works
+
+`get()` is the single abstract method. You call it with no arguments, and it returns a value.
+
+```java
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> greeting = () -> "Welcome to Java 8";
+
+        System.out.println(greeting.get()); // Welcome to Java 8
+    }
+}
+```
+
+**Flow:**
+```
+Input:              nothing
+Action (get):       () -> "Welcome to Java 8"
+Output (T = String): "Welcome to Java 8"
+```
+
+> Notice `()` — empty parentheses because `Supplier` takes no input.
+
+---
+
+### 17.4 Summary Table
+
+| Aspect | Detail |
+|---|---|
+| **Package** | `java.util.function` |
+| **Interface** | `Supplier<T>` |
+| **Abstract method** | `T get()` |
+| **Input** | None |
+| **Output** | One output of type `T` |
+| **Default methods** | None |
+| **Purpose** | Produce / supply a value without needing input |
+
+---
+
+### 17.5 `Supplier<T>` — Code Examples
+
+---
+
+#### Example 1: Supply a Simple String
+
+```java
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<String> message = () -> "Hello from Supplier!";
+
+        System.out.println(message.get());
+    }
+}
+```
+
+**Output:** `Hello from Supplier!`
+
+The simplest use — no input, just returns a string.
+
+---
+
+#### Example 2: Generate a Random Number
+
+```java
+import java.util.function.Supplier;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<Integer> randomNumber = () -> (int) (Math.random() * 100);
+
+        System.out.println("Random: " + randomNumber.get());
+        System.out.println("Random: " + randomNumber.get());
+    }
+}
+```
+
+**Output (varies):**
+```
+Random: 42
+Random: 87
+```
+
+Each call to `get()` produces a **new random number**. The supplier generates a fresh value every time.
+
+---
+
+#### Example 3: Get Current Date
+
+```java
+import java.util.function.Supplier;
+import java.time.LocalDate;
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<LocalDate> today = () -> LocalDate.now();
+
+        System.out.println("Today: " + today.get());
+    }
+}
+```
+
+**Output:** `Today: 2026-07-11`
+
+Useful when you need to supply the current date dynamically.
+
+---
+
+#### Example 4: Supply a Default Employee Object (Using Object)
+
+```java
+import java.util.function.Supplier;
+
+class Employee {
+    String name;
+    int salary;
+
+    Employee(String name, int salary) {
+        this.name = name;
+        this.salary = salary;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + salary;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<Employee> defaultEmployee = () -> new Employee("Unknown", 0);
+
+        Employee emp = defaultEmployee.get();
+
+        System.out.println(emp);
+    }
+}
+```
+
+**Output:** `Unknown - 0`
+
+`Supplier<Employee>` acts as a **factory** — every time you call `get()`, it creates a new default `Employee` object.
+
+---
+
+#### Example 5: Factory Method for Creating Multiple Students (Using Object)
+
+```java
+import java.util.function.Supplier;
+import java.util.List;
+import java.util.ArrayList;
+
+class Student {
+    private static int counter = 0;
+    String name;
+    int rollNo;
+
+    Student() {
+        this.rollNo = ++counter;
+        this.name = "Student-" + rollNo;
+    }
+
+    @Override
+    public String toString() {
+        return name + " (Roll: " + rollNo + ")";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Supplier<Student> studentFactory = () -> new Student();
+
+        // Create 3 students using the supplier
+        List<Student> students = new ArrayList<>();
+        students.add(studentFactory.get());
+        students.add(studentFactory.get());
+        students.add(studentFactory.get());
+
+        students.forEach(s -> System.out.println(s));
+    }
+}
+```
+
+**Output:**
+```
+Student-1 (Roll: 1)
+Student-2 (Roll: 2)
+Student-3 (Roll: 3)
+```
+
+Each `get()` call creates a **new Student** with an auto-incremented roll number. This is a common **factory pattern** using `Supplier`.
+
+---
+
+### Quick Comparison: All Four Built-in Functional Interfaces
+
+| Interface | Input | Output | Method | One-line Description |
+|---|---|---|---|---|
+| `Predicate<T>` | ✅ Yes (`T`) | `boolean` | `test()` | Checks a condition |
+| `Function<T, R>` | ✅ Yes (`T`) | ✅ Yes (`R`) | `apply()` | Transforms input to output |
+| `Consumer<T>` | ✅ Yes (`T`) | ❌ None | `accept()` | Uses input, returns nothing |
+| `Supplier<T>` | ❌ None | ✅ Yes (`T`) | `get()` | Produces a value, needs nothing |
 
 ---
 
