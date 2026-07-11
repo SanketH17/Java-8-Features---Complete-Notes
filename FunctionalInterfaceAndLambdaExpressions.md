@@ -17,6 +17,7 @@
 12. [Practical Code Examples 💡](#12-practical-code-examples)
 13. [Key Points to Remember 🔑](#13-key-points-to-remember)
 14. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#14-built-in-functional-interfaces--functiont-r)
+15. [Built-in Functional Interfaces — `Predicate<T>` ✅](#15-built-in-functional-interfaces--predicatet)
 
 ## 1. What is a Functional Interface?🧩
 
@@ -1247,6 +1248,581 @@ public class Main2 {
 ```
 
 **Output:** `Sum of Marks of Student : 193`
+
+---
+
+## 15. Built-in Functional Interfaces — `Predicate<T>` ✅
+
+In the previous section, we learned about `Function<T, R>` which transforms data. Now let us learn about another very commonly used built-in Functional Interface: **`Predicate<T>`**.
+
+While `Function` is about **transforming** data, `Predicate` is about **testing** data.
+
+---
+
+### 15.1 What is `Predicate<T>`?
+
+`Predicate<T>` is a built-in Functional Interface that:
+
+- **Takes one input** of type `T`
+- **Tests it** against a condition
+- **Returns a `boolean`** — either `true` or `false`
+
+In simple words:
+
+> `Predicate<T>` is like a **question that can only be answered with Yes or No**.
+
+It is defined in the `java.util.function` package like this:
+
+```java
+@FunctionalInterface
+public interface Predicate<T> {
+    boolean test(T t);
+}
+```
+
+Here:
+
+| Symbol | Meaning |
+|---|---|
+| `T` | The type of input data that will be **tested** |
+| `boolean` | The output is always `true` or `false` |
+
+> **Key Point:** Unlike `Function<T, R>` where both input and output types can vary, `Predicate<T>` **always returns a `boolean`**. You only specify the input type `T`.
+
+---
+
+### 15.2 Why Was `Predicate<T>` Introduced?
+
+Before Java 8, if you wanted to check a condition (like "is this number even?" or "is this string empty?"), you would write an `if` statement or create a separate method every time.
+
+The problem was:
+- The same kind of checking logic was written **again and again** in different places.
+- There was **no standard way** to pass a condition as a parameter to a method.
+
+`Predicate<T>` was introduced so that you can:
+- **Define a condition once** using a lambda expression.
+- **Pass that condition** to methods that need to filter, validate, or test data.
+- **Reuse and combine** conditions easily.
+
+**Without `Predicate` (the old way):**
+
+```java
+public class Main {
+    // A separate method just to check even
+    static boolean isEven(int number) {
+        return number % 2 == 0;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(isEven(10)); // true
+    }
+}
+```
+
+**With `Predicate` (the Java 8 way):**
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> isEven = number -> number % 2 == 0;
+
+        System.out.println(isEven.test(10)); // true
+    }
+}
+```
+
+The condition is defined **inline**, can be **stored in a variable**, and can be **passed to other methods** — all in one clean line.
+
+---
+
+### 15.3 When Should You Use `Predicate<T>`?
+
+Use `Predicate<T>` whenever you need to **check a condition** and get a **yes/no answer**.
+
+Common scenarios:
+
+| Scenario | Input (`T`) | Question Being Asked |
+|---|---|---|
+| Is the number even? | `Integer` | `number % 2 == 0` |
+| Is the string empty? | `String` | `str.isEmpty()` |
+| Is the person an adult? | `Person` | `person.getAge() >= 18` |
+| Is the price within budget? | `Double` | `price <= 1000.0` |
+| Does the name start with "S"? | `String` | `name.startsWith("S")` |
+
+The simple rule is:
+
+> If you have **one input** and want to get a **true/false answer** — use `Predicate<T>`.
+
+---
+
+### 15.4 Real-World Analogy — The Security Guard
+
+Imagine a **security guard** at the entrance of a building:
+
+- A person walks up to the gate → This is the **input** (`T`)
+- The guard checks: "Do you have a valid ID?" → This is the **test()** method
+- The guard says **"Yes, you may enter"** or **"No, you cannot enter"** → This is the **boolean result**
+
+```
+[Person]  →  [ Security Guard ]  →  [true / false]
+   T              test()              boolean
+```
+
+- The **guard** is the `Predicate`
+- The **question** he asks is the lambda logic
+- The **answer** is always Yes (`true`) or No (`false`)
+
+In code:
+
+```java
+Predicate<String> hasValidID = id -> id != null && !id.isEmpty();
+
+System.out.println(hasValidID.test("ID-12345")); // true
+System.out.println(hasValidID.test(""));          // false
+System.out.println(hasValidID.test(null));         // false
+```
+
+The **same guard** (same `Predicate`) checks **every person** using the **same rule**.
+
+---
+
+### 15.5 How the `test()` Method Works
+
+`test()` is the **single abstract method** of the `Predicate<T>` interface.
+
+**Signature:**
+
+```java
+boolean test(T t);
+```
+
+**How it works — step by step:**
+
+1. You create a `Predicate` using a lambda expression — this defines the condition.
+2. You call `test()` and pass an input value of type `T`.
+3. The lambda evaluates the condition on that input.
+4. It returns `true` if the condition is satisfied, `false` otherwise.
+
+**Example:**
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        // Step 1: Define the condition — is the string empty?
+        Predicate<String> isEmpty = str -> str.isEmpty();
+
+        // Step 2: Call test() with an input
+        System.out.println(isEmpty.test(""));      // true
+        System.out.println(isEmpty.test("Hello")); // false
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+```
+
+**Flow of data:**
+
+```
+Input (T = String):    ""
+Condition (test):      str -> str.isEmpty()
+Output (boolean):      true
+
+Input (T = String):    "Hello"
+Condition (test):      str -> str.isEmpty()
+Output (boolean):      false
+```
+
+---
+
+### 15.6 Default and Static Methods of `Predicate<T>`
+
+`Predicate<T>` is more powerful than it first appears. Beyond `test()`, it provides several **default and static methods** that let you **combine and modify** predicates.
+
+| Method | Type | What It Does |
+|---|---|---|
+| `test(T t)` | Abstract | Evaluates the condition and returns `true` or `false` |
+| `and(Predicate other)` | Default | Combines two predicates with **logical AND** (`&&`) |
+| `or(Predicate other)` | Default | Combines two predicates with **logical OR** (`\|\|`) |
+| `negate()` | Default | Returns the **opposite** of the current predicate |
+| `isEqual(Object target)` | Static | Creates a predicate that checks **equality** with the given object |
+
+---
+
+#### `and()` — Both Conditions Must Be True
+
+The `and()` method combines two predicates. The result is `true` **only if both** conditions are satisfied.
+
+Think of it as: *"Is the number greater than 10 **AND** less than 50?"*
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> greaterThan10 = n -> n > 10;
+        Predicate<Integer> lessThan50   = n -> n < 50;
+
+        // Combine with AND
+        Predicate<Integer> between10And50 = greaterThan10.and(lessThan50);
+
+        System.out.println(between10And50.test(25));  // true  (25 > 10 AND 25 < 50)
+        System.out.println(between10And50.test(5));   // false (5 is NOT > 10)
+        System.out.println(between10And50.test(60));  // false (60 is NOT < 50)
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+false
+```
+
+---
+
+#### `or()` — At Least One Condition Must Be True
+
+The `or()` method combines two predicates. The result is `true` **if at least one** condition is satisfied.
+
+Think of it as: *"Is the number negative **OR** greater than 100?"*
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> lessThan0      = n -> n < 0;
+        Predicate<Integer> greaterThan100 = n -> n > 100;
+
+        // Combine with OR
+        Predicate<Integer> outOfRange = lessThan0.or(greaterThan100);
+
+        System.out.println(outOfRange.test(150));  // true  (150 > 100)
+        System.out.println(outOfRange.test(-5));   // true  (-5 < 0)
+        System.out.println(outOfRange.test(50));   // false (neither condition met)
+    }
+}
+```
+
+**Output:**
+```
+true
+true
+false
+```
+
+---
+
+#### `negate()` — Reverse the Result
+
+The `negate()` method returns a new predicate that gives the **opposite** result of the original.
+
+Think of it as: *"If the original says true, negate says false — and vice versa."*
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> isPositive = n -> n > 0;
+
+        // Negate — now it checks for NOT positive
+        Predicate<Integer> isNotPositive = isPositive.negate();
+
+        System.out.println(isNotPositive.test(-10)); // true  (original would say false, negate flips it)
+        System.out.println(isNotPositive.test(5));   // false (original would say true, negate flips it)
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+```
+
+> **Tip:** `negate()` is useful when you already have a predicate and need the opposite condition without writing a new lambda.
+
+---
+
+#### `isEqual()` — Check Equality with a Target Value
+
+The `isEqual()` is a **static method** that creates a predicate to check whether the input is **equal** to a given target object. It uses `Objects.equals()` internally, making it **null-safe**.
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<String> isJava = Predicate.isEqual("Java");
+
+        System.out.println(isJava.test("Java"));   // true
+        System.out.println(isJava.test("Python")); // false
+        System.out.println(isJava.test(null));      // false (null-safe)
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+false
+```
+
+> **Tip:** `isEqual()` is useful when you need a quick equality check without writing `str -> str.equals("Java")` manually. It also handles `null` safely, avoiding `NullPointerException`.
+
+---
+
+### 15.7 Summary Table
+
+| Aspect | Detail |
+|---|---|
+| **Package** | `java.util.function` |
+| **Interface name** | `Predicate<T>` |
+| **Abstract method** | `boolean test(T t)` |
+| **Input** | One input of type `T` |
+| **Output** | Always `boolean` (`true` or `false`) |
+| **Purpose** | Test / validate / check a condition |
+| **Default methods** | `and()`, `or()`, `negate()` |
+| **Static method** | `isEqual()` |
+| **Analogy** | A security guard — checks a rule and says yes or no |
+
+---
+
+### 15.8 `Predicate<T>` — Code Examples
+
+Below are **5 examples**, arranged from basic to practical, to help you master `Predicate<T>`.
+
+---
+
+#### Example 1: Check if a Number is Even
+
+The simplest use of `Predicate` — test a single condition on a number.
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> isEven = num -> num % 2 == 0;
+
+        System.out.println(isEven.test(20)); // true
+        System.out.println(isEven.test(15)); // false
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+```
+
+**Explanation:**
+- `T` = `Integer` (the number being tested)
+- The lambda `num -> num % 2 == 0` checks if the number is divisible by 2.
+- `test(20)` returns `true` because 20 is even. `test(15)` returns `false` because 15 is odd.
+
+---
+
+#### Example 2: Check if a String Starts with a Specific Letter
+
+Using `Predicate` with `String` operations.
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<String> startsWithS = name -> name.startsWith("S");
+
+        System.out.println(startsWithS.test("Sanket")); // true
+        System.out.println(startsWithS.test("Rahul"));  // false
+        System.out.println(startsWithS.test("Sneha"));  // true
+    }
+}
+```
+
+**Output:**
+```
+true
+false
+true
+```
+
+**Explanation:**
+- The lambda checks if the input string starts with the letter "S".
+- This is reusable — the same predicate can test any number of strings.
+
+---
+
+#### Example 3: Combine Conditions Using `and()` and `or()`
+
+Demonstrating how to chain multiple predicates together.
+
+```java
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        Predicate<Integer> isEven        = n -> n % 2 == 0;
+        Predicate<Integer> isGreaterThan10 = n -> n > 10;
+
+        // AND — both conditions must be true
+        Predicate<Integer> isEvenAndGreaterThan10 = isEven.and(isGreaterThan10);
+        System.out.println("12 -> " + isEvenAndGreaterThan10.test(12)); // true
+        System.out.println("8  -> " + isEvenAndGreaterThan10.test(8));  // false (not > 10)
+
+        // OR — at least one condition must be true
+        Predicate<Integer> isEvenOrGreaterThan10 = isEven.or(isGreaterThan10);
+        System.out.println("8  -> " + isEvenOrGreaterThan10.test(8));   // true (is even)
+        System.out.println("15 -> " + isEvenOrGreaterThan10.test(15));  // true (is > 10)
+        System.out.println("7  -> " + isEvenOrGreaterThan10.test(7));   // false (neither)
+    }
+}
+```
+
+**Output:**
+```
+12 -> true
+8  -> false
+8  -> true
+15 -> true
+7  -> false
+```
+
+**Explanation:**
+- `and()` returns `true` only when **both** predicates pass. 12 is even AND greater than 10, so it passes. 8 is even but NOT greater than 10, so it fails.
+- `or()` returns `true` when **at least one** predicate passes. 7 fails both, so it returns `false`.
+
+---
+
+#### Example 4: Filter a List Using `Predicate`
+
+A practical example — using `Predicate` to filter elements from a collection.
+
+```java
+import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.function.Predicate;
+
+public class Main {
+    public static void main(String[] args) {
+        List<String> names = Arrays.asList("Sanket", "Rahul", "Sneha", "Amit", "Swati");
+
+        Predicate<String> startsWithS = name -> name.startsWith("S");
+
+        List<String> filtered = filterList(names, startsWithS);
+
+        System.out.println("Names starting with S: " + filtered);
+    }
+
+    // A reusable method that accepts any Predicate
+    static List<String> filterList(List<String> list, Predicate<String> condition) {
+        List<String> result = new ArrayList<>();
+        for (String item : list) {
+            if (condition.test(item)) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+}
+```
+
+**Output:**
+```
+Names starting with S: [Sanket, Sneha, Swati]
+```
+
+**Explanation:**
+- The `filterList()` method accepts **any** `Predicate<String>`. It does not know what condition will be checked — it just calls `test()` on each element.
+- This makes the method **reusable**. You could pass a different predicate (e.g., `name -> name.length() > 4`) without changing the method itself.
+- This is the same pattern used internally by Java's Stream API `filter()` method.
+
+---
+
+#### Example 5: Filter Users by Role Using `Predicate`
+
+A real-world example — filtering a list of custom objects.
+
+```java
+import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.List;
+
+class User {
+    private String name;
+    private String role;
+
+    public User(String name, String role) {
+        this.name = name;
+        this.role = role;
+    }
+
+    public String getName() { return name; }
+    public String getRole() { return role; }
+
+    @Override
+    public String toString() {
+        return "User{name='" + name + "', role='" + role + "'}";
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        List<User> users = new ArrayList<>();
+        users.add(new User("Sanket", "admin"));
+        users.add(new User("Rahul", "member"));
+        users.add(new User("Neha",  "admin"));
+        users.add(new User("Amit",  "member"));
+
+        // Predicate to check if user is an admin
+        Predicate<User> isAdmin = user -> user.getRole().equals("admin");
+
+        // Filter admins
+        List<User> admins = filterUsers(users, isAdmin);
+        System.out.println("Admins: " + admins);
+
+        // Filter non-admins using negate()
+        List<User> nonAdmins = filterUsers(users, isAdmin.negate());
+        System.out.println("Non-Admins: " + nonAdmins);
+    }
+
+    static List<User> filterUsers(List<User> users, Predicate<User> condition) {
+        List<User> result = new ArrayList<>();
+        for (User user : users) {
+            if (condition.test(user)) {
+                result.add(user);
+            }
+        }
+        return result;
+    }
+}
+```
+
+**Output:**
+```
+Admins: [User{name='Sanket', role='admin'}, User{name='Neha', role='admin'}]
+Non-Admins: [User{name='Rahul', role='member'}, User{name='Amit', role='member'}]
+```
+
+**Explanation:**
+- `Predicate<User>` takes a `User` object and checks whether their role is `"admin"`.
+- The same `filterUsers()` method is reused for both filtering admins **and** non-admins.
+- For non-admins, we used `isAdmin.negate()` instead of writing a new lambda — this shows the real power of the `negate()` method.
+- This pattern is extremely common in real-world Java applications for filtering data from databases, APIs, and collections.
 
 ---
 
