@@ -18,9 +18,8 @@
 10. [Lambda vs Anonymous Inner Class ⚔️](#10-lambda-vs-anonymous-inner-class)
 11. [Lambda Expressions with Collections 📂](#11-lambda-expressions-with-collections)
 12. [Practical Code Examples 💡](#12-practical-code-examples)
-13. [Interview Q&A 🎤](#13-interview-qa)
-14. [Key Points to Remember 🔑](#14-key-points-to-remember)
-15. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#15-built-in-functional-interfaces--functiont-r)
+13. [Key Points to Remember 🔑](#14-key-points-to-remember)
+14. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#15-built-in-functional-interfaces--functiont-r)
 
 ## 1. What is a Functional Interface? 🧩
 
@@ -55,7 +54,7 @@ Functional Interfaces are the **backbone** of many powerful Java 8 features:
 
 ---
 
-## 2. Why Were Functional Interfaces Introduced?
+## 2. Why Were Functional Interfaces Introduced? 🟢
 
 Before Java 8, implementing an interface required writing a separate class or an anonymous inner class, which resulted in a lot of unnecessary boilerplate code. 
 Functional Interfaces were introduced to support Lambda Expressions, allowing us to provide implementations in a much shorter, cleaner, and more readable way.
@@ -114,7 +113,7 @@ Functional Interfaces were introduced to support:
 
 ---
 
-## 3. The `@FunctionalInterface` Annotation
+## 3. The `@FunctionalInterface` Annotation 🔴
 
 Java provides the `@FunctionalInterface` annotation to **explicitly declare** that an interface is intended to be a functional interface.
 
@@ -160,7 +159,7 @@ However, using `@FunctionalInterface` is **strongly recommended** because:
 
 ---
 
-## 4. Rules for Functional Interfaces
+## 4. Rules for Functional Interfaces 🟧
 
 ### Rule 1: Exactly One Abstract Method
 
@@ -251,7 +250,7 @@ Service every 6 months
 
 ---
 
-## 5. What is a Lambda Expression?
+## 5. What is a Lambda Expression? 🟣
 
 A **Lambda Expression** is an **anonymous function** — a function without a name.
 
@@ -295,7 +294,7 @@ Lambda removes unnecessary extra details and focuses only on the actual work.
 
 ---
 
-## 6. Why Were Lambda Expressions Introduced?
+## 6. Why Were Lambda Expressions Introduced? ⚪
 
 Before Java 8, passing behavior to a method required verbose code. Lambda Expressions were introduced to solve this by:
 
@@ -307,7 +306,7 @@ Before Java 8, passing behavior to a method required verbose code. Lambda Expres
 
 ---
 
-## 7. Lambda Expression Syntax
+## 7. Lambda Expression Syntax 🟨
 
 ### Basic Syntax
 
@@ -353,7 +352,7 @@ When using `{}` braces with multiple statements, you **must** use the `return` k
 
 ---
 
-## 8. Lambda Syntax Rules
+## 8. Lambda Syntax Rules 🟣
 
 Understanding these rules will help you write lambdas correctly and confidently.
 
@@ -369,7 +368,7 @@ Understanding these rules will help you write lambdas correctly and confidently.
 
 ---
 
-## 9. Type Inference in Lambda Expressions
+## 9. Type Inference in Lambda Expressions 🟡
 
 In Lambda Expressions, Java can **automatically infer** the data type of parameters from the Functional Interface method signature.
 
@@ -396,7 +395,7 @@ This keeps lambda expressions concise and clean.
 
 ---
 
-## 10. Lambda vs Anonymous Inner Class
+## 10. Lambda vs Anonymous Inner Class 🔶
 
 | Feature | Anonymous Inner Class | Lambda Expression |
 |---|---|---|
@@ -430,7 +429,7 @@ Both do the same thing. Lambda is the preferred modern approach.
 
 ---
 
-## 11. Lambda Expressions with Collections
+## 11. Lambda Expressions with Collections 🔷💠
 
 Lambda Expressions work seamlessly with Java Collections, making operations like iteration and sorting much cleaner.
 
@@ -486,7 +485,7 @@ Priya
 
 ---
 
-## 12. Practical Code Examples
+## 12. Practical Code Examples 🟧
 
 ### Example 1: No Parameter, No Return Value
 
