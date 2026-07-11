@@ -1,8 +1,5 @@
 # Functional Interfaces and Lambda Expressions in Java 8
 
-> These notes cover one of the most important and foundational topics of Java 8.
-> Master this topic to understand Streams, Method References, and modern Java coding style.
-
 ---
 ## Table of Contents
 
