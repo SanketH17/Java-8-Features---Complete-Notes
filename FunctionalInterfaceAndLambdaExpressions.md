@@ -18,8 +18,8 @@
 10. [Lambda vs Anonymous Inner Class ⚔️](#10-lambda-vs-anonymous-inner-class)
 11. [Lambda Expressions with Collections 📂](#11-lambda-expressions-with-collections)
 12. [Practical Code Examples 💡](#12-practical-code-examples)
-13. [Key Points to Remember 🔑](#14-key-points-to-remember)
-14. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#15-built-in-functional-interfaces--functiont-r)
+13. [Key Points to Remember 🔑](#13-key-points-to-remember)
+14. [Built-in Functional Interfaces — `Function<T, R>` 🧰](#14-built-in-functional-interfaces--functiont-r)
 
 ## 1. What is a Functional Interface? 🧩
 
@@ -625,18 +625,7 @@ The lambda replaces the entire anonymous inner class with a single line.
 
 ---
 
-### Q14. Name some built-in Functional Interfaces in Java 8.
-
-- `Predicate<T>` — checks a condition
-- `Function<T, R>` — transforms input to output
-- `Consumer<T>` — consumes input, returns nothing
-- `Supplier<T>` — produces a value, takes no input
-- `Runnable` — represents a thread task
-- `Comparator<T>` — compares two objects
-
----
-
-## 14. Key Points to Remember
+## 13. Key Points to Remember
 
 - Lambda Expression was introduced in **Java 8**.
 - It is an **anonymous function** — a function without a name.
@@ -656,7 +645,7 @@ The lambda replaces the entire anonymous inner class with a single line.
 
 ---
 
-## 15. Built-in Functional Interfaces — `Function<T, R>`
+## 14. Built-in Functional Interfaces — `Function<T, R>` 🔷🟦
 
 Java 8 introduced several **built-in Functional Interfaces** in the `java.util.function` package. These are ready-made interfaces that cover the most common use cases, so you do not have to create your own every time.
 
@@ -664,7 +653,7 @@ In this section, we will learn about the most versatile one: **`Function<T, R>`*
 
 ---
 
-### 15.1 What is `Function<T, R>`?
+### 14.1 What is `Function<T, R>`?
 
 `Function<T, R>` is a built-in Functional Interface that:
 
@@ -696,7 +685,7 @@ Here:
 
 ---
 
-### 15.2 Why Was `Function<T, R>` Introduced?
+### 14.2 Why Was `Function<T, R>` Introduced?
 
 Function<T, R> was introduced in Java 8 to avoid creating separate interfaces and classes for simple data transformation logic. It allows us to write the transformation directly using a lambda expression, making the code shorter, cleaner, and easier to read.
 
@@ -744,7 +733,7 @@ The entire transformation is written in **one line**. No extra interfaces, no ex
 
 ---
 
-### 15.3 When Should You Use `Function<T, R>`?
+### 14.3 When Should You Use `Function<T, R>`?
 
 Use `Function<T, R>` whenever you need to **transform** or **convert** data from one form to another.
 
@@ -764,7 +753,7 @@ The simple rule is:
 
 ---
 
-### 15.4 Understanding T and R with a Real-World Analogy
+### 14.4 Understanding T and R with a Real-World Analogy
 
 #### The Juice Machine Analogy
 
@@ -798,7 +787,7 @@ The **same machine** (same `Function`) can process **different inputs** and give
 
 ---
 
-### 15.5 How the `apply()` Method Works
+### 14.5 How the `apply()` Method Works
 
 `apply()` is the **single abstract method** of the `Function<T, R>` interface.
 
@@ -859,7 +848,7 @@ System.out.println(doubleIt.apply(100)); // 200
 
 ---
 
-### 15.6 Summary Table
+### 14.6 Summary Table
 
 | Aspect | Detail |
 |---|---|
@@ -873,7 +862,7 @@ System.out.println(doubleIt.apply(100)); // 200
 
 ---
 
-### 15.7 `Function<T, R>` — Code Examples
+### 14.7 `Function<T, R>` — Code Examples
 
 Below are **5 examples**, arranged from basic to practical, to help you master `Function<T, R>`.
 
