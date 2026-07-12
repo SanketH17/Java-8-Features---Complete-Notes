@@ -1253,7 +1253,7 @@ public class Main2 {
 
 ---
 
-## 15. Built-in Functional Interfaces — `Predicate<T>` ✅
+## 15. Built-in Functional Interfaces — `Predicate<T>`✅
 
 In the previous section, we learned about `Function<T, R>` which transforms data. Now let us learn about another very commonly used built-in Functional Interface: **`Predicate<T>`**.
 
@@ -1797,7 +1797,7 @@ Non-Admins: [User{name='Rahul', role='member'}, User{name='Amit', role='member'}
 
 ---
 
-## 16. Built-in Functional Interfaces — `Consumer<T>` 📥
+## 16. Built-in Functional Interfaces — `Consumer<T>`📥
 
 ### 16.1 What is `Consumer<T>`?
 
@@ -2072,7 +2072,7 @@ This shows `andThen()` in a real-world scenario — first modify the data, then 
 
 ---
 
-## 17. Built-in Functional Interfaces — `Supplier<T>` 📤
+## 17. Built-in Functional Interfaces — `Supplier<T>`📤
 
 ### 17.1 What is `Supplier<T>`?
 
