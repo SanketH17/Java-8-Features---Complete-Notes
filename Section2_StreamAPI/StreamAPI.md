@@ -19,12 +19,13 @@
 9. [Intermediate Operations](#9--intermediate-operations)
 10. [Terminal Operations](#10--terminal-operations)
 11. [Optional with Streams](#11--optional-with-streams)
-12. [Primitive Streams](#12--primitive-streams)
-13. [Best Practices](#13--best-practices)
-14. [Common Mistakes](#14--common-mistakes)
-15. [Interview Questions](#15--interview-questions)
-16. [Quick Revision Cheat Sheet](#16--quick-revision-cheat-sheet)
-17. [Important Points to Remember](#17--important-points-to-remember)
+12. [Parallel Streams](#12--parallel-streams)
+13. [Primitive Streams](#13--primitive-streams)
+14. [Best Practices](#14--best-practices)
+15. [Common Mistakes](#15--common-mistakes)
+16. [Interview Questions](#16--interview-questions)
+17. [Quick Revision Cheat Sheet](#17--quick-revision-cheat-sheet)
+18. [Important Points to Remember](#18--important-points-to-remember)
 
 ---
 
@@ -523,26 +524,159 @@ List<Employee> sortedBysalary = employees.stream()
 
 ### 9.6 `peek(Consumer<T>)`
 
-**What:** Performs an action on each element **without modifying the stream**. Mainly used for **debugging**.
+### What is `peek()`?
+
+`peek()` lets you **look at each element as it passes through the stream pipeline** without changing it.
+
+Think of it as a **camera** placed in the pipeline. It shows you what is happening at each step, but it **doesn't modify the data**.
+
+```
+Original Data
+      │
+      ▼
+ filter()
+      │
+      ▼
+ peek() 👀   ← Just looks at the data
+      │
+      ▼
+ map()
+      │
+      ▼
+ peek() 👀   ← Looks again after mapping
+      │
+      ▼
+ collect()
+```
+
+---
+
+### Why do we use `peek()`?
+
+`peek()` is mainly used for **debugging**.
+
+It helps you see:
+
+- Which elements passed the `filter()`
+- What values are produced by `map()`
+- How the data changes at each stage
+
+It is **not meant for modifying elements**.
+
+---
+
+### Example
 
 ```java
 List<String> result = names.stream()
     .filter(name -> name.length() > 4)
-    .peek(name -> System.out.println("Filtered: " + name))
+    .peek(name -> System.out.println("After Filter: " + name))
     .map(String::toUpperCase)
-    .peek(name -> System.out.println("Mapped: " + name))
+    .peek(name -> System.out.println("After Map: " + name))
     .collect(Collectors.toList());
 ```
 
-**Output:**
+Suppose:
+
+```java
+List<String> names = List.of("Ram", "Sanket", "Priya", "Amit", "Rahul");
 ```
-Filtered: Sanket
-Mapped: SANKET
-Filtered: Priya
-Mapped: PRIYA
-Filtered: Rahul
-Mapped: RAHUL
+
+### Output
+
 ```
+After Filter: Sanket
+After Map: SANKET
+
+After Filter: Priya
+After Map: PRIYA
+
+After Filter: Rahul
+After Map: RAHUL
+```
+
+---
+
+### Step-by-Step Flow
+
+```
+Original List
+
+Ram
+Sanket
+Priya
+Amit
+Rahul
+      │
+      ▼
+filter(name.length() > 4)
+
+Sanket
+Priya
+Rahul
+      │
+      ▼
+peek()
+
+Print:
+Sanket
+Priya
+Rahul
+      │
+      ▼
+map(String::toUpperCase)
+
+SANKET
+PRIYA
+RAHUL
+      │
+      ▼
+peek()
+
+Print:
+SANKET
+PRIYA
+RAHUL
+      │
+      ▼
+collect()
+
+[SANKET, PRIYA, RAHUL]
+```
+
+---
+
+### Important Points
+
+- ✅ `peek()` is an **Intermediate Operation**.
+- ✅ It **returns another Stream**, so you can continue the pipeline.
+- ✅ It **does not modify** the elements.
+- ✅ It is mostly used for **debugging and understanding the stream flow**.
+- ❌ Avoid using `peek()` to perform business logic or update data.
+
+---
+
+### Easy Analogy
+
+Imagine airport security.
+
+```
+Passengers
+     │
+     ▼
+Security Check
+     │
+     ▼
+👮 Guard checks each passenger
+(No one is stopped or changed)
+     │
+     ▼
+Boarding Gate
+```
+
+The guard only **observes** each passenger and lets them continue.
+
+Similarly, `peek()` only **observes each element** as it flows through the stream and then passes it to the next operation.
 
 > 💡 **Tip:** `peek()` is very helpful for debugging. You can see what flows through each stage of the pipeline without breaking the chain.
 
@@ -959,7 +1093,277 @@ cheapest.ifPresent(p -> System.out.println(p.getName()));
 
 ---
 
-## 12. 🔹 Primitive Streams
+## 12. 🔹 Parallel Streams
+
+### What is a Parallel Stream?
+
+A **Parallel Stream** processes multiple elements **at the same time** using **multiple threads**.
+
+Unlike a normal stream, which processes elements **one by one**, a parallel stream divides the work into smaller tasks and executes them concurrently.
+
+---
+
+### Sequential Stream vs Parallel Stream
+
+#### Sequential Stream
+
+Processes one element after another using a **single thread**.
+
+```text
+List
+ │
+ ▼
+1 → 2 → 3 → 4 → 5 → 6
+ │
+ ▼
+Single Thread
+ │
+ ▼
+Result
+```
+
+```java
+numbers.stream()
+       .forEach(System.out::println);
+```
+
+---
+
+#### Parallel Stream
+
+Processes multiple elements simultaneously using **multiple threads**.
+
+```text
+               List
+                │
+                ▼
+        ┌───────┼────────┐
+        ▼       ▼        ▼
+      1,2     3,4      5,6
+        │       │        │
+   Thread-1 Thread-2 Thread-3
+        │       │        │
+        └───────┼────────┘
+                ▼
+             Result
+```
+
+```java
+numbers.parallelStream()
+       .forEach(System.out::println);
+```
+
+---
+
+### How to Create a Parallel Stream
+
+#### Method 1: Using `parallelStream()`
+
+```java
+List<Integer> numbers = List.of(1, 2, 3, 4, 5);
+
+numbers.parallelStream()
+       .forEach(System.out::println);
+```
+
+---
+
+#### Method 2: Using `parallel()`
+
+Convert an existing stream into a parallel stream.
+
+```java
+numbers.stream()
+       .parallel()
+       .forEach(System.out::println);
+```
+
+Both approaches produce a **Parallel Stream**.
+
+---
+
+### Example 1: Observe Multiple Threads
+
+```java
+List<Integer> numbers = List.of(1,2,3,4,5,6,7,8);
+
+numbers.parallelStream()
+       .forEach(n ->
+           System.out.println(
+               n + " -> " + Thread.currentThread().getName()
+           )
+       );
+```
+
+#### Possible Output
+
+```text
+5 -> ForkJoinPool.commonPool-worker-1
+2 -> main
+7 -> ForkJoinPool.commonPool-worker-2
+1 -> main
+6 -> ForkJoinPool.commonPool-worker-1
+```
+
+Notice that different elements are processed by different threads.
+
+---
+
+### Example 2: Compare Sequential vs Parallel
+
+#### Sequential Stream
+
+```java
+numbers.stream()
+       .forEach(System.out::println);
+```
+
+Output
+
+```text
+1
+2
+3
+4
+5
+6
+```
+
+---
+
+#### Parallel Stream
+
+```java
+numbers.parallelStream()
+       .forEach(System.out::println);
+```
+
+Possible Output
+
+```text
+4
+1
+6
+2
+5
+3
+```
+
+> **The order is not guaranteed in a Parallel Stream.**
+
+---
+
+### Maintaining Order
+
+Use `forEachOrdered()` if you want to preserve the original order.
+
+```java
+numbers.parallelStream()
+       .forEachOrdered(System.out::println);
+```
+
+Output
+
+```text
+1
+2
+3
+4
+5
+6
+```
+
+---
+
+### When Should You Use Parallel Streams?
+
+✅ Good Choice
+
+- Large collections
+- CPU-intensive calculations
+- Independent operations (each element can be processed separately)
+
+❌ Avoid
+
+- Small collections
+- Operations that depend on processing order
+- Tasks involving shared mutable data
+- I/O operations (file reading, database calls, network requests)
+
+---
+
+### Advantages
+
+- Faster processing for large datasets.
+- Uses multiple CPU cores automatically.
+- Very easy to convert from a sequential stream.
+
+---
+
+### Disadvantages
+
+- Output order may change.
+- Thread management adds overhead.
+- Can be slower for small collections.
+- Shared mutable objects may lead to thread-safety issues.
+
+---
+
+### Interview Tips
+
+#### Difference Between `stream()` and `parallelStream()`
+
+| `stream()` | `parallelStream()` |
+|------------|--------------------|
+| Uses a single thread | Uses multiple threads |
+| Processes elements one by one | Processes elements simultaneously |
+| Preserves encounter order | Order is not guaranteed with `forEach()` |
+| Best for small collections | Best for large collections and CPU-intensive tasks |
+
+---
+
+### Easy Analogy
+
+Imagine 100 exam papers to check.
+
+#### Sequential Stream
+
+One teacher checks all papers.
+
+```text
+Teacher
+
+Paper 1
+Paper 2
+Paper 3
+...
+Paper 100
+```
+
+---
+
+#### Parallel Stream
+
+Four teachers divide the work.
+
+```text
+Teacher 1 → Paper 1-25
+Teacher 2 → Paper 26-50
+Teacher 3 → Paper 51-75
+Teacher 4 → Paper 76-100
+```
+
+Since multiple teachers work together, the papers are checked faster.
+
+---
+
+### Interview Definition
+
+> **A Parallel Stream is a type of Java Stream that processes elements concurrently using multiple threads from the ForkJoinPool. It can improve performance for large, CPU-intensive tasks, but it does not guarantee processing order unless `forEachOrdered()` is used.**
+
+---
+
+## 13. 🔹 Primitive Streams
 
 ### Why Primitive Streams?
 
@@ -1039,7 +1443,7 @@ System.out.println("Avg: " + stats.getAverage());
 ---
 
 
-## 13. 🔹 Best Practices
+## 14. 🔹 Best Practices
 
 1. **Prefer method references** over lambda expressions when possible:
    ```java
@@ -1081,7 +1485,7 @@ System.out.println("Avg: " + stats.getAverage());
 
 ---
 
-## 14. 🔹 Common Mistakes
+## 15. 🔹 Common Mistakes
 
 ### ❌ Mistake 1: Reusing a Stream
 
@@ -1143,7 +1547,7 @@ String name = stream.findFirst().get();
 
 ---
 
-## 15. 🔹 Interview Questions
+## 16. 🔹 Interview Questions
 
 ### Q1: What is the difference between `map()` and `flatMap()`?
 
@@ -1234,7 +1638,7 @@ Operations that **don't need to process all elements** to determine the result:
 
 ---
 
-## 16. 🔹 Quick Revision Cheat Sheet
+## 17. 🔹 Quick Revision Cheat Sheet
 
 ### Stream Creation
 
@@ -1300,7 +1704,7 @@ Collectors.toUnmodifiableList()      // → Unmodifiable List
 
 ---
 
-## 17. 🔹 Important Points to Remember
+## 18. 🔹 Important Points to Remember
 
 1. ✅ Streams **don't store data** — they process it.
 2. ✅ Streams **don't modify** the original source.
