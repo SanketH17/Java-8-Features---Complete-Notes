@@ -871,11 +871,10 @@ Map<Boolean, List<Employee>> result =
                         employee -> employee.getSalary() >= 75000
                 ));
 
-System.out.println("=== Salary >= ₹75,000 (High Earners) ===");
+
 result.get(true).forEach(employee ->
         System.out.println("   " + employee.getName() + " - ₹" + employee.getSalary()));
 
-System.out.println("\n=== Salary < ₹75,000 (Others) ===");
 result.get(false).forEach(employee ->
         System.out.println("   " + employee.getName() + " - ₹" + employee.getSalary()));
 ```
@@ -883,7 +882,6 @@ result.get(false).forEach(employee ->
 ### Output
 
 ```
-=== Salary >= ₹75,000 (High Earners) ===
    Diana Prince - ₹80000
    Ethan Hunt - ₹95000
    George Miller - ₹105000
@@ -893,7 +891,6 @@ result.get(false).forEach(employee ->
    Nina Patel - ₹78000
    Oscar White - ₹97000
 
-=== Salary < ₹75,000 (Others) ===
    Alice Johnson - ₹55000
    Bob Smith - ₹72000
    Charlie Brown - ₹68000
