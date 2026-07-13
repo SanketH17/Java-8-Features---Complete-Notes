@@ -1,0 +1,8 @@
+-> All Intermediate Operations or methods returns always a Stream only
+
+-> All Terminal Operations or methods returns a result from the Stream,
+When we call terminal method, immediately in Stream Pipeline all Intermediate Operations are executed and result of all Intermediate Operations is converted into the real result
+
+-> Stream Pipeline should have always only one Terminal Operation mandatory 
+
+-> Stream Pipeline will not be allowed more than one terminal method  but allowed more Intermediate methods
