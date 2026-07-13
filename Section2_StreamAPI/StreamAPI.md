@@ -20,12 +20,11 @@
 10. [Terminal Operations](#10--terminal-operations)
 11. [Optional with Streams](#11--optional-with-streams)
 12. [Primitive Streams](#12--primitive-streams)
-13. [Parallel Streams](#13--parallel-streams)
-14. [Best Practices](#14--best-practices)
-15. [Common Mistakes](#15--common-mistakes)
-16. [Interview Questions](#16--interview-questions)
-17. [Quick Revision Cheat Sheet](#17--quick-revision-cheat-sheet)
-18. [Important Points to Remember](#18--important-points-to-remember)
+13. [Best Practices](#13--best-practices)
+14. [Common Mistakes](#14--common-mistakes)
+15. [Interview Questions](#15--interview-questions)
+16. [Quick Revision Cheat Sheet](#16--quick-revision-cheat-sheet)
+17. [Important Points to Remember](#17--important-points-to-remember)
 
 ---
 
@@ -218,6 +217,22 @@ A Stream pipeline consists of **3 parts**:
 | **Source** | Where data comes from | Stream | `list.stream()` |
 | **Intermediate Op** | Transforms the stream | Another Stream | `.filter()`, `.map()` |
 | **Terminal Op** | Produces a result or side-effect | Non-stream (result) | `.collect()`, `.forEach()` |
+
+### 📜 Golden Rules of a Stream Pipeline
+
+> These are the core rules that govern how every Stream pipeline behaves:
+
+1. ✅ **All Intermediate Operations always return a Stream** — that's what makes chaining (`.filter().map().sorted()...`) possible.
+2. ✅ **All Terminal Operations return a result** (not a Stream) — a `List`, `Map`, `boolean`, `long`, `Optional`, or even `void`.
+3. ⚡ **Execution happens only when the Terminal Operation is called.** The moment a terminal method runs, **all** the chained Intermediate Operations execute immediately in sequence, and their combined effect is converted into the final result.
+4. 1️⃣ **Exactly ONE Terminal Operation is mandatory** per pipeline — a pipeline without a terminal operation does nothing (see [Lazy Evaluation](#7--lazy-evaluation)).
+5. 🚫 **A pipeline is NOT allowed more than one Terminal Operation.** Once a terminal operation runs, the stream is consumed/closed — calling another terminal operation on it throws `IllegalStateException`.
+6. ♾️ **A pipeline CAN have zero, one, or many Intermediate Operations** — there's no upper limit on how many you chain together.
+
+```
+Source ──▶ Intermediate ──▶ Intermediate ──▶ ... ──▶ Terminal (exactly 1) ──▶ Result
+           (0 or more allowed)                        (mandatory, only 1 allowed)
+```
 
 ### Complete Pipeline Example
 
@@ -458,60 +473,6 @@ System.out.println(names);
        map(getName)
               │
    ["Sanket", "Amit", "Priya"]
-```
-
----
-
-### 9.3 `flatMap(Function<T, Stream<R>>)`
-
-**What:** Flattens nested structures. If each element maps to a stream (or collection), `flatMap()` merges them all into a single flat stream.
-
-**Why needed:** When `map()` gives you a `Stream<Stream<T>>`, you need `flatMap()` to flatten it to `Stream<T>`.
-
-**Syntax:** `stream.flatMap(element -> streamOfElements)`
-
-```java
-List<List<String>> nestedList = Arrays.asList(
-    Arrays.asList("Java", "Python"),
-    Arrays.asList("C++", "Go"),
-    Arrays.asList("Rust", "Kotlin")
-);
-
-// Flatten into a single list
-List<String> flatList = nestedList.stream()
-    .flatMap(Collection::stream)
-    .collect(Collectors.toList());
-
-System.out.println(flatList);
-// Output: [Java, Python, C++, Go, Rust, Kotlin]
-```
-
-**Explanation:**
-
-```
-map() would give:     Stream< Stream<String> >
-                      [[Java, Python], [C++, Go], [Rust, Kotlin]]
-
-flatMap() gives:      Stream<String>
-                      [Java, Python, C++, Go, Rust, Kotlin]
-```
-
-### Real-World Example
-
-```java
-List<Student> students = Arrays.asList(
-    new Student("Sanket", Arrays.asList("Math", "Science")),
-    new Student("Priya", Arrays.asList("English", "Math", "Art"))
-);
-
-// Get all unique subjects across all students
-List<String> allSubjects = students.stream()
-    .flatMap(s -> s.getSubjects().stream())
-    .distinct()
-    .collect(Collectors.toList());
-
-System.out.println(allSubjects);
-// Output: [Math, Science, English, Art]
 ```
 
 ---
@@ -1077,80 +1038,8 @@ System.out.println("Avg: " + stats.getAverage());
 
 ---
 
-## 13. 🔹 Parallel Streams
 
-### What is a Parallel Stream?
-
-A parallel stream divides the data into **multiple chunks** and processes them on **multiple threads simultaneously** using the **ForkJoinPool**.
-
-```
-                   ┌───────────┐
-                   │  Source    │
-                   │  Data     │
-                   └─────┬─────┘
-                         │
-            ┌────────────┼────────────┐
-            ▼            ▼            ▼
-       ┌─────────┐ ┌─────────┐ ┌─────────┐
-       │ Thread 1│ │ Thread 2│ │ Thread 3│
-       │ Chunk 1 │ │ Chunk 2 │ │ Chunk 3 │
-       └────┬────┘ └────┬────┘ └────┬────┘
-            │            │            │
-            └────────────┼────────────┘
-                         ▼
-                   ┌───────────┐
-                   │  Combined │
-                   │  Result   │
-                   └───────────┘
-```
-
-### How to Create
-
-```java
-// Method 1: From collection
-List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-numbers.parallelStream()
-       .forEach(n -> System.out.println(Thread.currentThread().getName() + " : " + n));
-
-// Method 2: Convert sequential to parallel
-numbers.stream()
-       .parallel()
-       .forEach(System.out::println);
-```
-
-### When to Use Parallel Streams
-
-| ✅ Use When | ❌ Avoid When |
-|---|---|
-| Large data sets (100K+ elements) | Small data sets |
-| CPU-intensive operations | I/O-bound operations |
-| Independent operations (no shared state) | Order matters |
-| Stateless operations | Stateful operations |
-| ArrayList, arrays (good splittability) | LinkedList, I/O sources |
-
-### Performance Example
-
-```java
-long start, end;
-
-// Sequential
-start = System.currentTimeMillis();
-long seqSum = LongStream.rangeClosed(1, 100_000_000).sum();
-end = System.currentTimeMillis();
-System.out.println("Sequential: " + (end - start) + " ms");
-
-// Parallel
-start = System.currentTimeMillis();
-long parSum = LongStream.rangeClosed(1, 100_000_000).parallel().sum();
-end = System.currentTimeMillis();
-System.out.println("Parallel: " + (end - start) + " ms");
-```
-
-> ⚠️ **Warning:** Parallel streams use the common `ForkJoinPool`. Don't use them for blocking I/O operations, as it can starve other tasks. Always measure before assuming parallel is faster!
-
----
-
-## 14. 🔹 Best Practices
+## 13. 🔹 Best Practices
 
 1. **Prefer method references** over lambda expressions when possible:
    ```java
@@ -1192,7 +1081,7 @@ System.out.println("Parallel: " + (end - start) + " ms");
 
 ---
 
-## 15. 🔹 Common Mistakes
+## 14. 🔹 Common Mistakes
 
 ### ❌ Mistake 1: Reusing a Stream
 
@@ -1254,7 +1143,7 @@ String name = stream.findFirst().get();
 
 ---
 
-## 16. 🔹 Interview Questions
+## 15. 🔹 Interview Questions
 
 ### Q1: What is the difference between `map()` and `flatMap()`?
 
@@ -1282,7 +1171,6 @@ Intermediate operations are **not executed immediately**. They are only triggere
 **No.** Once a terminal operation is called, the stream is consumed and cannot be reused. Attempting to do so throws `IllegalStateException`.
 
 ---
-
 ### Q4: Difference between `Collection.stream()` and `Collection.parallelStream()`?
 
 - `stream()` → Processes elements **sequentially** (single thread).
@@ -1346,7 +1234,7 @@ Operations that **don't need to process all elements** to determine the result:
 
 ---
 
-## 17. 🔹 Quick Revision Cheat Sheet
+## 16. 🔹 Quick Revision Cheat Sheet
 
 ### Stream Creation
 
@@ -1412,7 +1300,7 @@ Collectors.toUnmodifiableList()      // → Unmodifiable List
 
 ---
 
-## 18. 🔹 Important Points to Remember
+## 17. 🔹 Important Points to Remember
 
 1. ✅ Streams **don't store data** — they process it.
 2. ✅ Streams **don't modify** the original source.
@@ -1431,7 +1319,3 @@ Collectors.toUnmodifiableList()      // → Unmodifiable List
 15. ✅ Stream API promotes **declarative** programming — focus on _what_, not _how_.
 
 ---
-
-> 📝 **Created for quick revision and interview preparation.**
->
-> _Master Streams = Master Java 8 Interviews!_ 🚀
