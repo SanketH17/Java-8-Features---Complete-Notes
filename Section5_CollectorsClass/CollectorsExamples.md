@@ -972,22 +972,11 @@ Male (8 employees):
 
 ---
 
-# Example 15: Find Highest Salary Employee in Each Department
+# Example 15: Find the Highest Paid Employee in Each Department
 
 ### Objective
 
-For every department, find the **highest-paid employee**.
-
-### What makes this powerful?
-
-This example combines **three concepts**:
-1. `groupingBy()` — to group employees by department
-2. `maxBy()` — a downstream collector that finds the maximum element in each group
-3. `Comparator` — to define "maximum" based on salary
-
-### When to use?
-
-Use this pattern when you need the "best" / "top" / "highest" / "latest" element per group — top scorer per subject, most expensive product per category, latest order per customer, etc.
+Find the employee who has the **highest salary** in each department.
 
 ```java
 Map<String, Optional<Employee>> highestPaidEmployee =
@@ -999,16 +988,12 @@ Map<String, Optional<Employee>> highestPaidEmployee =
                         )
                 ));
 
-System.out.println("Highest-paid employee in each department:");
-System.out.println("─".repeat(55));
-System.out.printf("%-15s %-20s %s%n", "Department", "Employee", "Salary");
-System.out.println("─".repeat(55));
-
 highestPaidEmployee.forEach((department, employee) ->
 
-        System.out.printf("%-15s %-20s ₹%,d%n",
-                department,
-                employee.get().getName(),
+        System.out.println(
+                department + " -> " +
+                employee.get().getName() +
+                " : ₹" +
                 employee.get().getSalary()
         )
 );
@@ -1017,61 +1002,41 @@ highestPaidEmployee.forEach((department, employee) ->
 ### Output
 
 ```
-Highest-paid employee in each department:
-───────────────────────────────────────────────────────
-Department      Employee             Salary
-───────────────────────────────────────────────────────
-HR              Alice Johnson        ₹55,000
-Finance         Laura Scott          ₹75,000
-IT              Michael Adams        ₹90,000
-Marketing       Diana Prince         ₹80,000
-Operations      Oscar White          ₹97,000
-Sales           Fiona Davis          ₹48,000
-Management      George Miller        ₹1,05,000
-Design          Hannah Lee           ₹67,000
-Support         Ian Clark            ₹60,000
-Legal           Julia Roberts        ₹85,000
+HR -> Alice Johnson : ₹55000
+Finance -> Laura Scott : ₹75000
+IT -> Michael Adams : ₹90000
+Marketing -> Diana Prince : ₹80000
+Operations -> Oscar White : ₹97000
+Sales -> Fiona Davis : ₹48000
+Management -> George Miller : ₹105000
+Design -> Hannah Lee : ₹67000
+Support -> Ian Clark : ₹60000
+Legal -> Julia Roberts : ₹85000
 ```
 
 ### Explanation
 
-Let's trace how this works for the **IT** department:
+This example uses two collectors:
+
+- `groupingBy()` → Groups employees by department.
+- `maxBy()` → Finds the employee with the highest salary in each department.
+
+For example, in the **IT** department:
 
 ```
-Step 1 — groupingBy(Department):
-   IT group contains: [Charlie Brown (₹68,000), Michael Adams (₹90,000)]
+IT Employees
 
-Step 2 — maxBy(comparing(getSalary)) applied to the IT group:
-   Compare: 68,000 vs 90,000
-   Winner: Michael Adams (₹90,000)
+Charlie Brown   ₹68,000
+Michael Adams   ₹90,000
 
-Result: IT → Optional[Michael Adams]
+Highest Salary
+
+Michael Adams   ₹90,000
 ```
 
-This same process happens for all 10 departments independently.
+The same process is performed for every department.
 
-- `Collectors.maxBy(Comparator)` returns an `Optional<Employee>` because a group could theoretically be empty.
-- `Comparator.comparing(Employee::getSalary)` compares employees by their salary in ascending order, and `maxBy` picks the one with the **highest** salary.
-- For departments with only 1 employee (Sales, Management, Design, Support, Legal), that single employee is automatically the "highest paid."
-- For departments with 2 employees, the one with the higher salary is selected:
-  - **HR:** Alice (55,000) vs Kevin (52,000) → **Alice Johnson**
-  - **Finance:** Bob (72,000) vs Laura (75,000) → **Laura Scott**
-  - **IT:** Charlie (68,000) vs Michael (90,000) → **Michael Adams**
-  - **Marketing:** Diana (80,000) vs Nina (78,000) → **Diana Prince**
-  - **Operations:** Ethan (95,000) vs Oscar (97,000) → **Oscar White**
-
-> ⚠️ **Note:** `employee.get()` is used here because `maxBy` returns `Optional<Employee>`. In production code, you should handle the empty case:
-> ```java
-> employee.ifPresent(e -> System.out.println(e.getName()));
-> ```
->
-> Or use `collectingAndThen` to unwrap the `Optional` automatically:
-> ```java
-> Collectors.collectingAndThen(
->     Collectors.maxBy(Comparator.comparing(Employee::getSalary)),
->     Optional::get
-> )
-> ```
+> **Note:** `maxBy()` returns an `Optional<Employee>`, so we use `employee.get()` to access the employee. In real applications, it's better to check if a value is present before calling `get()`.
 
 ---
 
